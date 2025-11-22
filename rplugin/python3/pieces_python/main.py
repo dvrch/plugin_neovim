@@ -34,6 +34,7 @@ class Pieces:
 
     @pynvim.function('PiecesCopilotSendQuestion')
     def send_question(self, args):
+        self.nvim.async_call(self.nvim.out_write, f"Pieces Copilot question received by Python: {args[0]}")
         if args[0].strip():
             Settings.api_client.copilot.stream_question(args[0])
 
@@ -85,13 +86,19 @@ class Pieces:
 
     @pynvim.function("PiecesSetConversation")
     def set_conversation(self, args):
-        if args:
+        conversation_id = args[0] if args else None
+        if conversation_id:
             try:
-                conversation = BasicChat(args[0])
-            except:
-                conversation = None
+                # Set to an existing conversation
+                conversation = BasicChat(id=conversation_id, client=Settings.api_client)
+            except Exception as e:
+                self.nvim.err_write(f"Failed to load conversation {conversation_id}: {e}\\n")
+                # Fallback to a new chat if loading fails
+                conversation = BasicChat(client=Settings.api_client)
         else:
-            conversation = None
+            # Start a new conversation
+            conversation = BasicChat(client=Settings.api_client)
+        
         Settings.api_client.copilot.chat = conversation
 
     @pynvim.function("PiecesDeleteConversation")
