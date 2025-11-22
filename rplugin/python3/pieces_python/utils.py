@@ -110,10 +110,12 @@ def is_pieces_opened(bypass_login=False):
                 if Settings.api_client.is_pieces_running():
                     if not login_state:
                         return
-                    HealthWS.get_instance().start()
+                    # Import startup here to avoid circular dependency
+                    from .startup import Startup
+                    Startup.startup()
                     return func(*args, **kwargs)
                 else:
-                    return Settings.nvim.exec_lua("require('pieces.utils').notify_pieces_os()")
+                    return Settings.nvim.async_call(Settings.nvim.exec_lua,"require('pieces.utils').notify_pieces_os()")
         return wrapper
     return decorator
 

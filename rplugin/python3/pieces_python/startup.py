@@ -20,6 +20,10 @@ from .utils import check_compatibility, on_copilot_message
 
 
 class Startup:
+	health_ws = None
+	auth_ws = None
+	assets_ws = None
+	conversation_ws = None
 	@classmethod
 	def startup(cls):
 		"""START THE WEBSOCKETS!"""
@@ -33,12 +37,12 @@ class Startup:
 				Settings.nvim.command('echohl None')
 		except:  # Internet issues or status code is not 200
 			pass
-		AuthWS(Settings.api_client, Auth.on_user_callback)
-		AssetsIdentifiersWS(Settings.api_client,cls.update_lua_assets,cls.delete_lua_asset)
-		ConversationWS(Settings.api_client,cls.update_lua_conversations,cls.delete_lua_conversation)
-		health_ws = HealthWS(Settings.api_client, cls.on_message, cls.on_startup,on_close=lambda x,y,z: cls.on_close())
+		cls.auth_ws = AuthWS(Settings.api_client, Auth.on_user_callback)
+		cls.assets_ws = AssetsIdentifiersWS(Settings.api_client,cls.update_lua_assets,cls.delete_lua_asset)
+		cls.conversation_ws = ConversationWS(Settings.api_client,cls.update_lua_conversations,cls.delete_lua_conversation)
+		cls.health_ws = HealthWS(Settings.api_client, cls.on_message, cls.on_startup,on_close=lambda x,y,z: cls.on_close())
 		if Settings.api_client.is_pieces_running():
-			health_ws.start()
+			cls.health_ws.start()
 
 	@classmethod
 	def on_message(cls, message):
