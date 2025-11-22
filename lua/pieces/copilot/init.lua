@@ -116,12 +116,14 @@ local function setup()
 	layout = get_layout(split,input_popup,chat_popup)
 	layout:mount()
 
-	update_status_bar()
-	vim.api.nvim_create_autocmd("ModeChanged", {
-	  pattern = "*",
-	  callback = update_status_bar,
-	})
-	slash_commands.setup_buffer(vim.api.nvim_get_current_buf())
+	-- update_status_bar()
+	-- vim.api.nvim_create_autocmd("ModeChanged", {
+	--   pattern = "*",
+	--   callback = update_status_bar,
+	-- })
+	vim.schedule(function()
+		slash_commands.setup_buffer(input_popup.bufnr)
+	end)
 end
 
 

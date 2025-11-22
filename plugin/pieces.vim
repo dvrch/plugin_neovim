@@ -18,7 +18,7 @@ function! RunPiecesStartup()
         call PiecesStartup()
     catch /^Vim\%((\a\+)\)\=:E/
         echohl WarningMsg
-        echomsg 'Seems there is an issue with the python environment or you forgot to run :UpdateRemotePlugins, Feel free to open a discussion on the GitHub repo https://github.com/pieces-app/plugin_neovim/discussions'
+        echomsg 'Pieces plugin startup failed. Error: ' . v:exception
         echohl None
     endtry
 endfunction

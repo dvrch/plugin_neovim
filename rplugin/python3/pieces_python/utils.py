@@ -88,7 +88,7 @@ def check_login() -> bool:
     from .auth import Auth
 
     if not Auth.user_profile:
-        Settings.nvim.exec_lua("require('pieces.utils').notify_login()")
+        Settings.nvim.async_call(Settings.nvim.exec_lua,"require('pieces.utils').notify_login()")
         return False
     return True
 
